@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { BookingState } from './bookingTypes';
+import { BookingState, Seat } from './bookingTypes';
 import { fetchSeatApi } from './bookingAPI';
 
 
@@ -21,14 +21,12 @@ export const bookingSlice = createSlice({
   name: "booking",
   initialState,
   reducers: {
-    addSeat: (state, action: PayloadAction<any>) => {
-      state.seats.push(action.payload);
-    },
-    removeSeat: (state, action: PayloadAction<any>) => {
-      state.seats = state.seats.filter((seat) => seat !== action.payload);
-    },
-    setIsLoading: (state, action: PayloadAction<boolean>) => {
-      state.isLoading = action.payload;
+    updateSeatStatus: (state, action: PayloadAction<Seat>
+    ) => {
+      let seat = state.seats.find((seat: any) => seat.id === action.payload.id);
+      if (seat && !seat.isBooked) {
+        seat.isBooked = true;
+      }
     },
   }, extraReducers: (builder) => {
     builder.addCase(fetchSeats.pending, (state) => {
@@ -49,6 +47,6 @@ export const seatsSelector = (state: any) => state.booking.seats;
 
 export const isLoadingSelector = (state: any) => state.booking.isLoading;
 
-export const { addSeat, removeSeat, setIsLoading } = bookingSlice.actions;
+export const updateSeatStatus  = bookingSlice.actions.updateSeatStatus;
 
 export default bookingSlice.reducer;
